@@ -13,8 +13,8 @@ to the `main` branch. For this to work the following points must be met.
 
 - The server must have the user `deploy`, within the group `homepage`
 - The user must have r/w rights to the `/var/homepage/nginx/www/` directory.
-- The Github runner must have the private key for the user `deploy` set as an
-  environment file called `SSH_PRIVATE_KEYFILE`
+- The Github Actions environment must have the private key for the user
+  `deploy` set as an environment variable called `SSH_PRIVATE_KEY`
 
 ## License and Legal Notices
 

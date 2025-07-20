@@ -1,0 +1,69 @@
+name: Deploy Hugo site to server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DART_SASS_VERSION: 1.89.2
+      HUGO_VERSION: 0.148.0
+      HUGO_ENVIRONMENT: production
+      TZ: UTC
+    steps:
+      - name: Install Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+          sudo dpkg -i ${{ runner.temp }}/hugo.deb
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - name: Configure Git
+        run: git config core.quotepath false
+      - name: Build with Hugo
+        run: |
+          hugo \
+            --gc \
+            --minify \
+      - name: Upload artifact hugo site
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugo_site
+          path: ./public
+
+  deploy:
+    environment: production
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifact hugo site
+        uses: actions/download-artifact@v4
+        with:
+          name: hugo_site
+          path: public
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H alpaca.michaelscheller.eu >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        run: |
+          rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519" public/ "deploy@alpaca.michaelscheller.eu:/var/homepage/nginx/www/"
+          ssh -i ~/.ssh/id_ed25519 deploy@alpaca.michaelscheller.eu 'chown -R deploy:homepage /var/homepage/nginx/www'
+
+      - name: Clean up SSH keys
+        if: always()
+        run: rm -rf ~/.ssh
