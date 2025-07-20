@@ -1,5 +1,7 @@
 # My Homepage
 
+[![Deploy Website](https://github.com/darkylein/homepage/actions/workflows/hugo.yaml/badge.svg?branch=main)](https://github.com/darkylein/homepage/actions/workflows/hugo.yaml)
+
 [michaelscheller.eu](https://michaelscheller.eu) powered by
 [hugo](https://gohugo.io/) & [coder](https://github.com/luizdepra/hugo-coder/).
 
