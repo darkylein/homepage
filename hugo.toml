@@ -1,0 +1,49 @@
+baseurl = "http://michaelscheller.eu"
+title = "Michael's Homepage"
+theme = "hugo-coder"
+languagecode = "de-DE"
+defaultcontentlanguage = "en"
+
+
+[pagination]
+pagerSize = 20
+
+[markup.highlight]
+style = "github-dark"
+
+[params]
+author = "Michael Scheller"
+info = "Fachinformatiker für Systemintegration i.A."
+description = "Michael's Homepage"
+keywords = "developer,personal"
+avatarurl = "images/avatar.webp"
+
+since = 2025
+
+colorScheme = "auto"
+hidecolorschemetoggle = false
+
+[taxonomies]
+category = "categories"
+series = "series"
+tag = "tags"
+author = "authors"
+
+[[params.social]]
+name = "Github"
+icon = "fa-brands fa-github fa-2x"
+weight = 1
+url = "https://github.com/darkylein"
+
+[[menu.main]]
+name = "About"
+weight = 1
+url = "about/"
+[[menu.main]]
+name = "Datenschutz"
+weight = 8
+url = "datenschutz/"
+[[menu.main]]
+name = "Impressum"
+weight = 9
+url = "impressum/"

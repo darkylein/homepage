@@ -4,3 +4,8 @@
 
 # direnv
 /.direnv
+
+# hugo
+/.hugo_build.lock
+/public/
+/resources/
