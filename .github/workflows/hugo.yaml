@@ -3,7 +3,7 @@ name: Deploy Hugo site to server
 on:
   push:
     branches:
-      - ci/cd # TODO: Change to main branch
+      - main
   workflow_dispatch:
 
 defaults:
