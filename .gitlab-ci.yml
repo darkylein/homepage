@@ -1,0 +1,40 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+  - build
+  - deploy
+
+build-job:
+  image: "hugomods/hugo"
+  stage: build
+  script:
+    - echo "Building the site..."
+    - hugo --minify
+  artifacts:
+    name: "public-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - public/
+    expire_in: 1 hour
+
+deploy-job:
+  image: alpine:latest
+  stage: deploy
+  needs:
+    - job: build-job
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  before_script:
+    - apk add --no-cache openssh rsync
+    - chmod 600 "$SSH_PRIVATE_KEYFILE"
+    - mkdir -p ~/.ssh
+    - ssh-keyscan -H alpaca.michaelscheller.eu >> ~/.ssh/known_hosts
+  script:
+    - echo "Testing ssh connection..."
+    - ssh -i "$SSH_PRIVATE_KEYFILE" deploy@alpaca.michaelscheller.eu 'echo "SSH connection successful"'
+    - echo "Deploying the site..."
+    - rsync -az --delete -e "ssh -i $SSH_PRIVATE_KEYFILE" public/ "deploy@alpaca.michaelscheller.eu:/var/homepage/nginx/www/"
+    - ssh -i $SSH_PRIVATE_KEYFILE deploy@alpaca.michaelscheller.eu 'chown -R deploy:homepage /var/homepage/nginx/www'
+  after_script:
+    - rm -rf ~/.ssh
