@@ -57,12 +57,12 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H alpaca.michaelscheller.eu >> ~/.ssh/known_hosts
+          ssh-keyscan -H 46.224.15.74 >> ~/.ssh/known_hosts
 
       - name: Deploy to server
         run: |
-          rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519" public/ "deploy@alpaca.michaelscheller.eu:/var/homepage/nginx/www/"
-          ssh -i ~/.ssh/id_ed25519 deploy@alpaca.michaelscheller.eu 'chown -R deploy:homepage /var/homepage/nginx/www'
+          rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519" public/ "deploy@46.224.15.74:/var/homepage/nginx/www/"
+          ssh -i ~/.ssh/id_ed25519 deploy@46.224.15.74 'chown -R deploy:homepage /var/homepage/nginx/www'
 
       - name: Clean up SSH keys
         if: always()
